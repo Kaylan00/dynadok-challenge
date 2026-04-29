@@ -13,6 +13,8 @@ O projeto tem dois serviços:
 - Python 3.10+
 - Token do Hugging Face (gratuito): https://huggingface.co/settings/tokens
 
+Ou apenas **Docker** e **Docker Compose**, sem precisar instalar Node ou Python localmente.
+
 ## Configuração
 
 ```bash
@@ -24,6 +26,16 @@ Abra `python-llm/.env` e cole seu `HF_TOKEN`.
 
 ## Como rodar
 
+### Com Docker (recomendado)
+
+```bash
+docker compose up --build
+```
+
+Node disponível em `http://localhost:3005`, Python em `http://localhost:5000`.
+
+### Sem Docker
+
 ```bash
 # instalar dependências
 ./setup.sh install
@@ -33,7 +45,21 @@ Abra `python-llm/.env` e cole seu `HF_TOKEN`.
 ./setup.sh start-node
 ```
 
-Node disponível em `http://localhost:3005`, Python em `http://localhost:5000`.
+## Testes
+
+```bash
+# todos os testes
+./setup.sh test
+
+# separado
+./setup.sh test-node
+./setup.sh test-python
+```
+
+## Documentação (Swagger)
+
+- Node API: `http://localhost:3005/docs`
+- Python LLM: `http://localhost:5000/docs`
 
 ## Endpoints
 
