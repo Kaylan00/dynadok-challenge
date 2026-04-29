@@ -14,8 +14,7 @@ const swaggerSpec = swaggerJsdoc({
     info: {
       title: "LLM Summarizer — Node API",
       version: "1.0.0",
-      description:
-        "API Node responsável por receber requisições, validar dados, persistir tarefas em JSON e acionar o serviço Python para geração de resumos via LLM.",
+      description: "API Node que gerencia tarefas de resumo de texto via serviço Python com LangChain.",
     },
     servers: [{ url: "http://localhost:3005", description: "Local" }],
     components: {

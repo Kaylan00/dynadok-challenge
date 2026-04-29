@@ -16,9 +16,7 @@ const summarizerService = new SummarizerService(PYTHON_LLM_URL);
  *   post:
  *     tags: [Tasks]
  *     summary: Criar tarefa com resumo
- *     description: >
- *       Valida o texto e o idioma, aciona o serviço Python para gerar o resumo via LLM
- *       e persiste a tarefa em JSON. A tarefa só é criada se o resumo for gerado com sucesso.
+ *     description: Envia o texto pro serviço Python, aguarda o resumo e persiste a tarefa. Nada é salvo se o Python falhar.
  *     requestBody:
  *       required: true
  *       content:
@@ -71,8 +69,7 @@ router.post("/", async (req: Request, res: Response) => {
  * /tasks:
  *   get:
  *     tags: [Tasks]
- *     summary: Listar todas as tarefas
- *     description: Retorna todas as tarefas persistidas em JSON.
+ *     summary: Listar tarefas
  *     responses:
  *       200:
  *         description: Lista de tarefas.
@@ -99,7 +96,6 @@ router.get("/", (_req: Request, res: Response) => {
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID da tarefa.
  *     responses:
  *       200:
  *         description: Tarefa encontrada.
@@ -146,7 +142,6 @@ router.get("/:id", (req: Request, res: Response) => {
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID da tarefa a ser removida.
  *     responses:
  *       204:
  *         description: Tarefa deletada com sucesso.
