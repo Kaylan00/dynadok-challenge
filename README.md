@@ -1,19 +1,16 @@
 # LLM Summarizer API
 
-API para resumir textos usando LLM. Você manda um texto e um idioma, o sistema gera um resumo traduzido e salva a tarefa.
+API que recebe um texto e um idioma, manda pro serviço Python gerar o resumo via LangChain, e salva tudo numa lista de tarefas.
 
-O projeto tem dois serviços:
+Dois serviços rodando juntos:
 
-- **node-api**: recebe as requisições, valida os dados, salva as tarefas em JSON e chama o serviço Python
-- **python-llm**: recebe o texto e o idioma, gera o resumo usando LangChain e retorna o resultado
+- **node-api** — entrada da aplicação, valida os dados, persiste em JSON e chama o Python
+- **python-llm** — só gera o resumo, sem saber nada de CRUD
 
 ## Requisitos
 
-- Node.js 18+
-- Python 3.10+
 - Token do Hugging Face (gratuito): https://huggingface.co/settings/tokens
-
-Ou apenas **Docker** e **Docker Compose**, sem precisar instalar Node ou Python localmente.
+- Docker + Docker Compose (recomendado), ou Node 18+ e Python 3.10+
 
 ## Configuração
 
@@ -22,25 +19,24 @@ cp node-api/.env.example node-api/.env
 cp python-llm/.env.example python-llm/.env
 ```
 
-Abra `python-llm/.env` e cole seu `HF_TOKEN`.
+Edite `python-llm/.env` e coloque seu `HF_TOKEN`.
 
-## Como rodar
+## Rodando
 
-### Com Docker (recomendado)
+### Com Docker
 
 ```bash
 docker compose up --build
 ```
 
-Node disponível em `http://localhost:3005`, Python em `http://localhost:5000`.
+Node em `http://localhost:3005`, Python em `http://localhost:5000`.
 
 ### Sem Docker
 
 ```bash
-# instalar dependências
 ./setup.sh install
 
-# em terminais separados:
+# dois terminais separados:
 ./setup.sh start-python
 ./setup.sh start-node
 ```
@@ -48,18 +44,17 @@ Node disponível em `http://localhost:3005`, Python em `http://localhost:5000`.
 ## Testes
 
 ```bash
-# todos os testes
 ./setup.sh test
 
-# separado
+# ou separado:
 ./setup.sh test-node
 ./setup.sh test-python
 ```
 
-## Documentação (Swagger)
+## Swagger
 
-- Node API: `http://localhost:3005/docs`
-- Python LLM: `http://localhost:5000/docs`
+- `http://localhost:3005/docs`
+- `http://localhost:5000/docs`
 
 ## Endpoints
 
@@ -72,8 +67,6 @@ curl http://localhost:3005/
 ```json
 { "message": "API is running" }
 ```
-
----
 
 ### `POST /tasks`
 
@@ -92,13 +85,7 @@ curl -X POST http://localhost:3005/tasks \
 }
 ```
 
-Idiomas aceitos: `pt`, `en`, `es`. Qualquer outro retorna `400`:
-
-```json
-{ "message": "Language not supported" }
-```
-
----
+Idiomas aceitos: `pt`, `en`, `es`. Qualquer outro retorna `400`.
 
 ### `GET /tasks`
 
@@ -117,24 +104,13 @@ curl http://localhost:3005/tasks
 ]
 ```
 
----
-
 ### `GET /tasks/:id`
 
 ```bash
 curl http://localhost:3005/tasks/1
 ```
 
-```json
-{
-  "id": 1,
-  "text": "Seu texto aqui...",
-  "summary": "Resumo gerado em português.",
-  "lang": "pt"
-}
-```
-
----
+`404` se não existir, `400` se o ID não for número.
 
 ### `DELETE /tasks/:id`
 
@@ -142,19 +118,17 @@ curl http://localhost:3005/tasks/1
 curl -X DELETE http://localhost:3005/tasks/1
 ```
 
-Retorna `204` sem body em caso de sucesso. `404` se a tarefa não existir.
+`204` no sucesso, `404` se não encontrar.
 
-## Decisões tomadas
+## Algumas notas
 
-**Node gerencia as tarefas, Python gera o resumo.** Faz sentido manter as responsabilidades separadas: o Node cuida do CRUD e da persistência, o Python fica focado na integração com o LLM.
+Separei Node e Python porque misturar LangChain com a lógica de CRUD ia complicar sem necessidade. O Node não precisa saber como o resumo é gerado, só precisa do resultado.
 
-**Persistência em JSON.** É o requisito do desafio e resolve bem pra esse escopo. Não tem concorrência de escrita e o volume é baixo.
+Preferi fazer resumo e tradução num prompt só pra não ter duas chamadas ao modelo. Mandei o idioma direto no prompt e funcionou bem.
 
-**Python valida o idioma também.** O Node já valida antes de chamar o Python, mas o serviço Python não deveria confiar cegamente no que chega. Os dois validam.
+O Python também valida o idioma mesmo o Node já validando antes — não faz sentido o serviço confiar cegamente no que chega, qualquer um pode chamar ele direto.
 
-**Resumo e tradução num único prompt.** Evita duas chamadas ao LLM. O modelo recebe o texto e o idioma alvo e retorna só o resumo já traduzido.
-
-**Tarefa só é criada depois que o resumo chega.** Se a chamada ao Python falhar, nada é persistido. Evita registros incompletos no JSON.
+A tarefa só é salva depois que o resumo volta com sucesso. Se o Python cair no meio, nada fica registrado pela metade.
 
 ## Variáveis de ambiente
 
