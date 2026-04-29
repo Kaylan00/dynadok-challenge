@@ -35,5 +35,8 @@ class LLMService:
 
     def summarize(self, text: str, lang: str) -> str:
         language = LANGUAGE_NAMES.get(lang, "English")
-        result = self.chain.invoke({"text": text, "language": language})
-        return result.strip()
+        try:
+            result = self.chain.invoke({"text": text, "language": language})
+            return result.strip()
+        except Exception as e:
+            raise RuntimeError(f"LLM call failed: {e}") from e

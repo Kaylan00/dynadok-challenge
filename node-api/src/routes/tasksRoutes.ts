@@ -46,7 +46,7 @@ const summarizerService = new SummarizerService(PYTHON_LLM_URL);
 router.post("/", async (req: Request, res: Response) => {
   const { text, lang } = req.body;
 
-  if (!text || typeof text !== "string") {
+  if (!text || typeof text !== "string" || text.trim().length === 0) {
     return res.status(400).json({ message: "O campo text é obrigatório." });
   }
 
