@@ -25,11 +25,10 @@ class LLMService:
             raise RuntimeError("HF_TOKEN is required")
 
         self.llm = ChatOpenAI(
-            model="tgi",
+            model="Qwen/Qwen2.5-7B-Instruct-Turbo",
             temperature=0.5,
-            top_p=0.7,
             api_key=hf_token,  # type: ignore
-            base_url="https://api-inference.huggingface.co/models/Qwen/Qwen2.5-72B-Instruct/v1",
+            base_url="https://router.huggingface.co/together/v1",
         )
         self.prompt = PromptTemplate.from_template(PROMPT_TEMPLATE)
         self.chain = self.prompt | self.llm | StrOutputParser()
