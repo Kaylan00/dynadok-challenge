@@ -3,5 +3,5 @@ __pycache__/
 node_modules/
 .env
 **/.DS_Store
-node-api/data/
+node-api/data/*.json
 node-api/dist/

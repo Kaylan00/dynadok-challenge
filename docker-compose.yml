@@ -14,5 +14,7 @@ services:
       - ./node-api/.env
     environment:
       - PYTHON_LLM_URL=http://python-llm:5000
+    volumes:
+      - ./node-api/data:/app/data
     depends_on:
       - python-llm
