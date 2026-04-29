@@ -13,7 +13,7 @@ interface PersistedData {
   tasks: Task[];
 }
 
-const DATA_FILE = path.resolve(__dirname, "../../data/tasks.json");
+const DATA_FILE = process.env.DATA_FILE ?? path.resolve(__dirname, "../../data/tasks.json");
 
 export class TasksRepository {
   private tasks: Task[] = [];

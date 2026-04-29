@@ -1,5 +1,16 @@
+import fs from "fs";
+import os from "os";
+import path from "path";
 import request from "supertest";
+
+const TEST_DATA_FILE = path.join(os.tmpdir(), `tasks-test-${process.pid}.json`);
+process.env.DATA_FILE = TEST_DATA_FILE;
+
 import app from "../src/app";
+
+afterAll(() => {
+  if (fs.existsSync(TEST_DATA_FILE)) fs.unlinkSync(TEST_DATA_FILE);
+});
 
 jest.mock("axios", () => {
   const post = jest.fn().mockResolvedValue({
