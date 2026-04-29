@@ -1,0 +1,18 @@
+services:
+  python-llm:
+    build: ./python-llm
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./python-llm/.env
+
+  node-api:
+    build: ./node-api
+    ports:
+      - "3005:3005"
+    env_file:
+      - ./node-api/.env
+    environment:
+      - PYTHON_LLM_URL=http://python-llm:5000
+    depends_on:
+      - python-llm
