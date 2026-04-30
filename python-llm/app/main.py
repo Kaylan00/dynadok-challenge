@@ -37,6 +37,9 @@ async def root() -> dict:
     tags=["Summarizer"],
 )
 async def summarize(payload: SummarizeRequest) -> dict:
+    if not payload.text or not payload.text.strip():
+        raise HTTPException(status_code=400, detail="Text is required.")
+
     if payload.lang not in SUPPORTED_LANGS:
         raise HTTPException(status_code=400, detail="Language not supported")
 

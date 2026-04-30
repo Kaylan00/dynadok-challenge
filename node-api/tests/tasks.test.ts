@@ -59,6 +59,16 @@ describe("POST /tasks", () => {
     const res = await request(app).post("/tasks").send({ text: "", lang: "en" });
     expect(res.status).toBe(400);
   });
+
+  it("retorna 502 quando o serviço LLM falha", async () => {
+    const axiosMock = require("axios");
+    axiosMock.create().post.mockRejectedValueOnce(new Error("LLM unavailable"));
+
+    const res = await request(app)
+      .post("/tasks")
+      .send({ text: "Texto válido para teste.", lang: "pt" });
+    expect(res.status).toBe(502);
+  });
 });
 
 describe("GET /tasks", () => {

@@ -60,7 +60,7 @@ router.post("/", async (req: Request, res: Response) => {
     return res.status(201).json(task);
   } catch (error) {
     console.error("Erro ao gerar resumo:", error);
-    return res.status(502).json({ message: "Falha ao comunicar com o serviço de LLM." });
+    return res.status(502).json({ message: "Failed to communicate with LLM service." });
   }
 });
 
@@ -119,12 +119,12 @@ router.get("/", (_req: Request, res: Response) => {
 router.get("/:id", (req: Request, res: Response) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
-    return res.status(400).json({ message: "ID inválido." });
+    return res.status(400).json({ message: "Invalid ID." });
   }
 
   const task = tasksRepository.getTaskById(id);
   if (!task) {
-    return res.status(404).json({ message: "Tarefa não encontrada." });
+    return res.status(404).json({ message: "Task not found." });
   }
 
   return res.json(task);
@@ -161,12 +161,12 @@ router.get("/:id", (req: Request, res: Response) => {
 router.delete("/:id", (req: Request, res: Response) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
-    return res.status(400).json({ message: "ID inválido." });
+    return res.status(400).json({ message: "Invalid ID." });
   }
 
   const deleted = tasksRepository.deleteTask(id);
   if (!deleted) {
-    return res.status(404).json({ message: "Tarefa não encontrada." });
+    return res.status(404).json({ message: "Task not found." });
   }
 
   return res.status(204).send();
