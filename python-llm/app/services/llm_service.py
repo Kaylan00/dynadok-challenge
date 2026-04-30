@@ -37,6 +37,7 @@ class LLMService:
         language = LANGUAGE_NAMES.get(lang, "English")
         try:
             result = self.chain.invoke({"text": text, "language": language})
-            return result.strip()
+            import re
+            return re.sub(r"^summary:\s*", "", result.strip(), flags=re.IGNORECASE)
         except Exception as e:
             raise RuntimeError(f"LLM call failed: {e}") from e
