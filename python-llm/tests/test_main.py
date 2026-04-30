@@ -49,3 +49,33 @@ def test_summarize_lang_invalido(client):
 def test_summarize_sem_campos(client):
     res = client.post("/summarize", json={})
     assert res.status_code == 422
+
+
+def test_prompt_template_renderiza_text_e_language():
+    from app.services.llm_service import PROMPT_TEMPLATE
+    from langchain_core.prompts import PromptTemplate
+
+    rendered = PromptTemplate.from_template(PROMPT_TEMPLATE).format(
+        text="hello world", language="Portuguese"
+    )
+    assert "hello world" in rendered
+    assert "Portuguese" in rendered
+    assert "translate" in rendered.lower()
+
+
+@pytest.mark.parametrize(
+    "lang,expected_language",
+    [("pt", "Portuguese"), ("en", "English"), ("es", "Spanish")],
+)
+def test_chain_recebe_language_correto(client, lang, expected_language):
+    from app.main import llm_service
+
+    llm_service.chain.invoke.reset_mock()
+    llm_service.chain.invoke.return_value = "ok"
+
+    res = client.post("/summarize", json={"text": "qualquer texto", "lang": lang})
+
+    assert res.status_code == 200
+    llm_service.chain.invoke.assert_called_once_with(
+        {"text": "qualquer texto", "language": expected_language}
+    )

@@ -47,9 +47,12 @@ Node em `http://localhost:3005`, Python em `http://localhost:5000`.
 ./setup.sh test
 
 # ou separado:
-./setup.sh test-node
-./setup.sh test-python
+./setup.sh test-node          # unit do Node (Jest + Supertest)
+./setup.sh test-python        # Python (pytest + FastAPI TestClient)
+./setup.sh test-integration   # e2e: Node sobe Python real e bate via HTTP
 ```
+
+O teste de integração roda o serviço Python de verdade com `LLM_FAKE=1` (sem precisar de `HF_TOKEN`), garantindo que o contrato HTTP entre os dois lados não quebre.
 
 ## Swagger
 

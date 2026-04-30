@@ -7,12 +7,16 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand --testPathIgnorePatterns=tests-integration",
+    "test:integration": "jest --runInBand --testPathPatterns=tests-integration"
   },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.ts"]
+    "testMatch": [
+      "**/tests/**/*.test.ts",
+      "**/tests-integration/**/*.test.ts"
+    ]
   },
   "dependencies": {
     "@types/swagger-jsdoc": "^6.0.4",

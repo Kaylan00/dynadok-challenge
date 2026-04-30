@@ -20,6 +20,13 @@ PROMPT_TEMPLATE = (
 
 class LLMService:
     def __init__(self) -> None:
+        self.fake = os.getenv("LLM_FAKE") == "1"
+        self.prompt = PromptTemplate.from_template(PROMPT_TEMPLATE)
+
+        if self.fake:
+            self.chain = None
+            return
+
         hf_token = os.getenv("HF_TOKEN")
         if not hf_token:
             raise RuntimeError("HF_TOKEN is required")
@@ -30,11 +37,14 @@ class LLMService:
             api_key=hf_token,  # type: ignore
             base_url="https://router.huggingface.co/together/v1",
         )
-        self.prompt = PromptTemplate.from_template(PROMPT_TEMPLATE)
         self.chain = self.prompt | self.llm | StrOutputParser()
 
     def summarize(self, text: str, lang: str) -> str:
         language = LANGUAGE_NAMES.get(lang, "English")
+
+        if self.fake:
+            return f"FAKE_SUMMARY[{language}]: {text[:40]}"
+
         try:
             result = self.chain.invoke({"text": text, "language": language})
             import re
