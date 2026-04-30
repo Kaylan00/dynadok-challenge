@@ -5,6 +5,12 @@ services:
       - "5000:5000"
     env_file:
       - ./python-llm/.env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
 
   node-api:
     build: ./node-api
@@ -17,4 +23,5 @@ services:
     volumes:
       - ./node-api/data:/app/data
     depends_on:
-      - python-llm
+      python-llm:
+        condition: service_healthy

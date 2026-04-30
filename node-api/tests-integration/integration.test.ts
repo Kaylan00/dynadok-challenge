@@ -107,8 +107,7 @@ describe("Integração Node ↔ Python", () => {
     expect(res.body.summary).toContain("Portuguese");
   });
 
-  it("propaga 400 do Python quando idioma é inválido", async () => {
-    // O Node valida antes, então pra exercitar o Python a gente bate direto.
+  it("retorna 400 para idioma inválido", async () => {
     const res = await request(app)
       .post("/tasks")
       .send({ text: "qualquer", lang: "fr" });

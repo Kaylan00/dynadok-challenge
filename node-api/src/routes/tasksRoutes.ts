@@ -15,8 +15,7 @@ const summarizerService = new SummarizerService(PYTHON_LLM_URL);
  * /tasks:
  *   post:
  *     tags: [Tasks]
- *     summary: Criar tarefa com resumo
- *     description: Envia o texto pro serviço Python, aguarda o resumo e persiste a tarefa. Nada é salvo se o Python falhar.
+ *     summary: Cria uma tarefa e retorna o resumo gerado pelo Python
  *     requestBody:
  *       required: true
  *       content:
@@ -25,23 +24,11 @@ const summarizerService = new SummarizerService(PYTHON_LLM_URL);
  *             $ref: '#/components/schemas/CreateTaskBody'
  *     responses:
  *       201:
- *         description: Tarefa criada com sucesso.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Task'
+ *         description: Tarefa criada.
  *       400:
- *         description: Parâmetros inválidos (text ausente ou idioma não suportado).
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorMessage'
+ *         description: text vazio ou idioma não suportado.
  *       502:
- *         description: Falha na comunicação com o serviço Python LLM.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorMessage'
+ *         description: Serviço Python fora do ar.
  */
 router.post("/", async (req: Request, res: Response) => {
   const { text, lang } = req.body;
@@ -69,16 +56,10 @@ router.post("/", async (req: Request, res: Response) => {
  * /tasks:
  *   get:
  *     tags: [Tasks]
- *     summary: Listar tarefas
+ *     summary: Lista todas as tarefas
  *     responses:
  *       200:
- *         description: Lista de tarefas.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Task'
+ *         description: OK
  */
 router.get("/", (_req: Request, res: Response) => {
   return res.json(tasksRepository.getAllTasks());
@@ -89,7 +70,7 @@ router.get("/", (_req: Request, res: Response) => {
  * /tasks/{id}:
  *   get:
  *     tags: [Tasks]
- *     summary: Buscar tarefa por ID
+ *     summary: Busca tarefa por ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -98,23 +79,9 @@ router.get("/", (_req: Request, res: Response) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: Tarefa encontrada.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Task'
- *       400:
- *         description: ID inválido.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorMessage'
+ *         description: OK
  *       404:
- *         description: Tarefa não encontrada.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorMessage'
+ *         description: Não encontrada.
  */
 router.get("/:id", (req: Request, res: Response) => {
   const id = Number(req.params.id);
@@ -135,7 +102,7 @@ router.get("/:id", (req: Request, res: Response) => {
  * /tasks/{id}:
  *   delete:
  *     tags: [Tasks]
- *     summary: Deletar tarefa por ID
+ *     summary: Remove uma tarefa
  *     parameters:
  *       - in: path
  *         name: id
@@ -144,19 +111,9 @@ router.get("/:id", (req: Request, res: Response) => {
  *           type: integer
  *     responses:
  *       204:
- *         description: Tarefa deletada com sucesso.
- *       400:
- *         description: ID inválido.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorMessage'
+ *         description: Removida.
  *       404:
- *         description: Tarefa não encontrada.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorMessage'
+ *         description: Não encontrada.
  */
 router.delete("/:id", (req: Request, res: Response) => {
   const id = Number(req.params.id);

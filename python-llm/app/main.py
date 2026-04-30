@@ -6,36 +6,31 @@ load_dotenv()
 sys.path = sys.path + ["./app"]
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from services.llm_service import LLMService
 
 SUPPORTED_LANGS = {"pt", "en", "es"}
 
-app = FastAPI(title="LLM Summarizer Service", version="1.0.0")
+app = FastAPI(title="LLM Summarizer Service")
 llm_service = LLMService()
 
 
 class SummarizeRequest(BaseModel):
-    text: str = Field(..., examples=["Artificial intelligence is transforming the way we work and live."])
-    lang: str = Field(..., description="Valores aceitos: pt, en, es", examples=["pt"])
+    text: str
+    lang: str
 
 
 class SummarizeResponse(BaseModel):
     summary: str
 
 
-@app.get("/", tags=["Status"])
+@app.get("/")
 async def root() -> dict:
     return {"message": "API is running"}
 
 
-@app.post(
-    "/summarize",
-    response_model=SummarizeResponse,
-    responses={400: {"description": "Idioma não suportado."}},
-    tags=["Summarizer"],
-)
+@app.post("/summarize", response_model=SummarizeResponse)
 async def summarize(payload: SummarizeRequest) -> dict:
     if not payload.text or not payload.text.strip():
         raise HTTPException(status_code=400, detail="Text is required.")

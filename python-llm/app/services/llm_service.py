@@ -1,4 +1,5 @@
 import os
+import re
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
@@ -47,7 +48,6 @@ class LLMService:
 
         try:
             result = self.chain.invoke({"text": text, "language": language})
-            import re
             return re.sub(r"^summary:\s*", "", result.strip(), flags=re.IGNORECASE)
         except Exception as e:
             raise RuntimeError(f"LLM call failed: {e}") from e

@@ -4,8 +4,8 @@ API que recebe um texto e um idioma, manda pro serviço Python gerar o resumo vi
 
 Dois serviços rodando juntos:
 
-- **node-api** — entrada da aplicação, valida os dados, persiste em JSON e chama o Python
-- **python-llm** — só gera o resumo, sem saber nada de CRUD
+- **node-api**: entrada da aplicação, valida os dados, persiste em JSON e chama o Python
+- **python-llm**: só gera o resumo, sem saber nada de CRUD
 
 ## Requisitos
 
@@ -129,7 +129,7 @@ Separei Node e Python porque misturar LangChain com a lógica de CRUD ia complic
 
 Preferi fazer resumo e tradução num prompt só pra não ter duas chamadas ao modelo. Mandei o idioma direto no prompt e funcionou bem.
 
-O Python também valida o idioma mesmo o Node já validando antes — não faz sentido o serviço confiar cegamente no que chega, qualquer um pode chamar ele direto.
+O Python também valida o idioma mesmo o Node já validando antes. Não faz sentido o serviço confiar cegamente no que chega, qualquer um pode chamar ele direto.
 
 A tarefa só é salva depois que o resumo volta com sucesso. Se o Python cair no meio, nada fica registrado pela metade.
 

@@ -51,6 +51,16 @@ def test_summarize_sem_campos(client):
     assert res.status_code == 422
 
 
+def test_summarize_texto_vazio(client):
+    res = client.post("/summarize", json={"text": "", "lang": "pt"})
+    assert res.status_code == 400
+
+
+def test_summarize_texto_so_espacos(client):
+    res = client.post("/summarize", json={"text": "   ", "lang": "pt"})
+    assert res.status_code == 400
+
+
 def test_prompt_template_renderiza_text_e_language():
     from app.services.llm_service import PROMPT_TEMPLATE
     from langchain_core.prompts import PromptTemplate
