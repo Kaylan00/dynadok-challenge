@@ -40,5 +40,8 @@ async def summarize(payload: SummarizeRequest) -> dict:
     if payload.lang not in SUPPORTED_LANGS:
         raise HTTPException(status_code=400, detail="Language not supported")
 
-    summary = llm_service.summarize(payload.text, payload.lang)
-    return {"summary": summary}
+    try:
+        summary = llm_service.summarize(payload.text, payload.lang)
+        return {"summary": summary}
+    except Exception:
+        raise HTTPException(status_code=502, detail="Failed to generate summary")

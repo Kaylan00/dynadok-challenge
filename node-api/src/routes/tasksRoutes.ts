@@ -47,7 +47,7 @@ router.post("/", async (req: Request, res: Response) => {
   const { text, lang } = req.body;
 
   if (!text || typeof text !== "string" || text.trim().length === 0) {
-    return res.status(400).json({ message: "O campo text é obrigatório." });
+    return res.status(400).json({ message: "Text is required." });
   }
 
   if (!lang || !SUPPORTED_LANGS.includes(lang)) {
